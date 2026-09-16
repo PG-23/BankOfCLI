@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:18.3
+    container_name: bank-of-cli-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - bank-of-cli-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -D ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  bank-of-cli-data:
