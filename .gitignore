@@ -19,6 +19,9 @@ out/
 .env
 application-local.properties
 
+# Local DB config
+db.properties
+
 # OS files
 .DS_Store
 Thumbs.db
