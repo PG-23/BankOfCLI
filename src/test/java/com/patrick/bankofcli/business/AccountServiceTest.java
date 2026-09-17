@@ -3,6 +3,7 @@ package com.patrick.bankofcli.business;
 import com.patrick.bankofcli.exception.InsufficientFundsException;
 import com.patrick.bankofcli.model.Account;
 import com.patrick.bankofcli.repository.AccountRepository;
+import com.patrick.bankofcli.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,13 +26,16 @@ public class AccountServiceTest {
     private AccountRepository accountRepository;
 
     @Mock
+    private TransactionRepository transactionRepository;
+
+    @Mock
     private Connection connection;
 
     private AccountService accountService;
 
     @BeforeEach
     void setUp() {
-        accountService = new AccountService(accountRepository);
+        accountService = new AccountService(accountRepository, transactionRepository);
     }
 
     @Test
@@ -48,6 +52,8 @@ public class AccountServiceTest {
         // Assert
         assertEquals(new BigDecimal("70.00"), result.getBalance());
         verify(accountRepository).updateBalance(connection, 1, new BigDecimal("70.00"));
+        // Currently just verifies any type of transaction occurs
+        verify(transactionRepository).create(eq(connection), any());
     }
 
     @Test
@@ -61,5 +67,6 @@ public class AccountServiceTest {
                 accountService.withdraw(connection, 1, new BigDecimal("60.00")));
 
         verify(accountRepository, never()).updateBalance(any(), anyInt(), any());
+        verify(transactionRepository, never()).create(any(), any());
     }
 }

@@ -8,11 +8,18 @@ import java.util.Optional;
 
 public class AccountRepositoryImpl implements AccountRepository {
 
+    private static final String SQL_CREATE =
+            "INSERT INTO accounts (pin, balance) VALUES (?, ?) RETURNING id";
+
+    private static final String SQL_FIND_BY_ID =
+            "SELECT id, pin, balance FROM accounts WHERE id = ?";
+
+    private static final String SQL_UPDATE_BALANCE =
+            "UPDATE accounts SET balance = ? WHERE id = ?";
+
     @Override
     public Account create(Connection conn, Account account) throws SQLException {
-        String sql = "INSERT INTO accounts (pin, balance) VALUES (?, ?) RETURNING id";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(SQL_CREATE)) {
             statement.setString(1, account.getPin());
             statement.setBigDecimal(2, account.getBalance());
 
@@ -27,9 +34,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Optional<Account> findById(Connection conn, int id) throws SQLException {
-        String sql = "SELECT id, pin, balance FROM accounts WHERE id = ?";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(SQL_FIND_BY_ID)) {
             statement.setInt(1, id);
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -48,9 +53,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean updateBalance(Connection conn, int id, BigDecimal newBalance) throws SQLException {
-        String sql = "UPDATE accounts SET balance = ? WHERE id = ?";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(SQL_UPDATE_BALANCE)) {
             statement.setBigDecimal(1, newBalance);
             statement.setInt(2, id);
 
