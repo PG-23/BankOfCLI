@@ -3,6 +3,7 @@ package com.patrick.bankofcli.business;
 import com.patrick.bankofcli.config.ConnectionManager;
 import com.patrick.bankofcli.exception.AccountNotFoundException;
 import com.patrick.bankofcli.exception.InsufficientFundsException;
+import com.patrick.bankofcli.exception.InvalidPinException;
 import com.patrick.bankofcli.model.Account;
 import com.patrick.bankofcli.model.Transaction;
 import com.patrick.bankofcli.model.TransactionType;
@@ -125,5 +126,51 @@ public class AccountService {
         transaction.setFromAccountId(fromAccountId);
         transaction.setToAccountId(toAccountId);
         transactionRepository.create(conn, transaction);
+    }
+
+    // ****REGISTER****
+
+    public Account register(String pin, BigDecimal initialBalance) throws SQLException {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            Account result = register(conn, pin, initialBalance);
+            conn.commit();
+            return result;
+        }
+    }
+
+    Account register(Connection conn, String pin, BigDecimal initialBalance) throws SQLException {
+        if (pin == null || !pin.matches("\\d{4}")) {
+            throw new InvalidPinException("PIN must be exactly 4 digits");
+        }
+        if (initialBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Initial balance cannot be negative");
+        }
+
+        Account account = new Account();
+        account.setPin(pin);
+        account.setBalance(initialBalance);
+
+        return accountRepository.create(conn, account);
+    }
+
+    // ****LOGIN****
+
+    public Account login(int accountId, String pin) throws SQLException {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            return login(conn, accountId, pin);
+        }
+    }
+
+    Account login(Connection conn, int accountId, String pin) throws SQLException {
+        Account account = accountRepository.findById(conn, accountId)
+                .orElseThrow(() -> new AccountNotFoundException(
+                        "No account found with id " + accountId));
+        // Future improvement would include evaluating a hashed pin rather than string
+        // evaluation as implemented below
+        if (!account.getPin().equals(pin)) {
+            throw new InvalidPinException("Incorrect PIN for account " + accountId);
+        }
+
+        return account;
     }
 }
