@@ -13,6 +13,7 @@ import com.patrick.bankofcli.repository.TransactionRepository;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class AccountService {
 
@@ -172,5 +173,36 @@ public class AccountService {
         }
 
         return account;
+    }
+
+    // ****CHECK BALANCE****
+
+    public Account checkBalance(int accountId) throws SQLException {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            return checkBalance(conn, accountId);
+        }
+    }
+
+    Account checkBalance(Connection conn, int accountId) throws SQLException {
+        return accountRepository.findById(conn, accountId)
+                .orElseThrow(() -> new AccountNotFoundException(
+                        "No account found with id " + accountId));
+    }
+
+    // ****VIEW TRANSACTION HISTORY****
+
+    public List<Transaction> getTransactionHistory(int accountId) throws SQLException {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            return getTransactionHistory(conn, accountId);
+        }
+    }
+
+    List<Transaction> getTransactionHistory(Connection conn, int accountId) throws SQLException {
+        // Verifies the account exists before returning its history
+        accountRepository.findById(conn, accountId)
+                .orElseThrow(() -> new AccountNotFoundException(
+                        "No account found with id " + accountId));
+
+        return transactionRepository.findByAccountId(conn, accountId);
     }
 }
