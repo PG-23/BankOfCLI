@@ -16,6 +16,8 @@
         <junit.version>5.13.4</junit.version>
         <postgresql.version>42.7.13</postgresql.version>
         <mockito.version>5.23.0</mockito.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <logback.version>1.5.25</logback.version>
     </properties>
 
     <dependencies>
@@ -46,6 +48,20 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- SLF4J API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- Logback (SLF4J implementation) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
     </dependencies>
 

@@ -1,4 +1,4 @@
-# Maven
+e# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -21,6 +21,9 @@ application-local.properties
 
 # Local DB config
 db.properties
+
+# Logs
+logs/
 
 # OS files
 .DS_Store
