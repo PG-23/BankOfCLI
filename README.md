@@ -4,7 +4,7 @@ A functional banking application that runs entirely within the terminal. This pr
 
 ## Entity Relationship Diagram
 
-![ERD Diagram](images/erd.png)
+![ERD Diagram](images/erdDiagramBankOfCLI.png)
 
 ## Features
 
