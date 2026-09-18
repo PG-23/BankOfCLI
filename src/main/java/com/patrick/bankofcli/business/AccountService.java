@@ -32,9 +32,8 @@ public class AccountService {
 
     public Account register(String pin, BigDecimal initialBalance) throws SQLException {
         try (Connection conn = ConnectionManager.getConnection()) {
-            Account result = register(conn, pin, initialBalance);
-            conn.commit();
-            return result;
+            return register(conn, pin, initialBalance);
+
         } catch (SQLException e) {
             logger.error("Database error during registration: {}", e.getMessage());
             throw e;
@@ -114,9 +113,7 @@ public class AccountService {
 
     public Account withdraw(int accountId, BigDecimal amount) throws SQLException {
         try (Connection conn = ConnectionManager.getConnection()) {
-            Account result = withdraw(conn, accountId, amount);
-            conn.commit();
-            return result;
+            return withdraw(conn, accountId, amount);
         } catch (SQLException e) {
             logger.error("Database error during withdrawal for account {}: {}", accountId, e.getMessage());
             throw e;
@@ -157,9 +154,7 @@ public class AccountService {
 
     public Account deposit(int accountId, BigDecimal amount) throws SQLException {
         try (Connection conn = ConnectionManager.getConnection()) {
-            Account result = deposit(conn, accountId, amount);
-            conn.commit();
-            return result;
+            return deposit(conn, accountId, amount);
         } catch (SQLException e) {
             logger.error("Database error during deposit for account {}: {}", accountId, e.getMessage());
             throw e;
